@@ -1,12 +1,12 @@
 <div align="center">
 
-# poly-llm
+# llmway
 
 **零依赖 · 浏览器 / Node 双端 · 统一接入国内外主流大模型**
 
 一个 API，调用所有大模型。告别为每个厂商单独装 SDK。
 
-[![npm version](https://img.shields.io/npm/v/poly-llm)](https://www.npmjs.com/package/poly-llm)
+[![npm version](https://img.shields.io/npm/v/llmway)](https://www.npmjs.com/package/llmway)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4-3178c6.svg)](https://www.typescriptlang.org/)
 ![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
@@ -16,7 +16,7 @@
 
 ---
 
-## 为什么你需要 poly-llm
+## 为什么你需要 llmway
 
 接入大模型通常会遇到三个痛点：
 
@@ -24,10 +24,10 @@
 2. **国产模型支持差** —— 主流 SDK 对 DeepSeek、通义千问、GLM、Kimi、豆包等支持零散，得自己拼。
 3. **依赖过重** —— Vercel AI SDK、LangChain 动辄几十个依赖，只想调个 API 却引入了半个世界。
 
-`poly-llm` 用 **一个统一接口** + **零运行时依赖（纯 `fetch` 实现）** 解决以上问题：
+`llmway` 用 **一个统一接口** + **零运行时依赖（纯 `fetch` 实现）** 解决以上问题：
 
 ```ts
-import { createLLM } from 'poly-llm';
+import { createLLM } from 'llmway';
 
 const llm = createLLM({
   apiKeys: { DEEPSEEK_API_KEY: 'sk-...' },
@@ -52,11 +52,11 @@ console.log(resp.content); // 你好！有什么可以帮你的吗？
 ## 快速开始
 
 ```bash
-npm install poly-llm
+npm install llmway
 ```
 
 ```ts
-import { createLLM } from 'poly-llm';
+import { createLLM } from 'llmway';
 
 // 方式一：通过环境变量（Node，变量名见下方「模型列表」）
 const llm = createLLM();
@@ -114,7 +114,7 @@ llm.register({
 
 ## 对比
 
-| | poly-llm | Vercel AI SDK | LangChain |
+| | llmway | Vercel AI SDK | LangChain |
 |--|----------|--------------|-----------|
 | 运行时依赖 | **0** | 数十个 | 数十个 |
 | 国产模型 | **内置** | 需自行适配 | 部分 provider |

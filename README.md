@@ -139,6 +139,43 @@ llm.register({
 });
 ```
 
+## Function Calling（工具调用）
+
+让模型调用你的函数（OpenAI 兼容协议）。模型返回 `toolCalls`，你执行函数后把结果作为 `tool` 消息回传：
+
+```ts
+const r = await llm.model('deepseek-v3').chat(
+  [{ role: 'user', content: '北京今天天气怎么样？' }],
+  {
+    tools: [
+      {
+        type: 'function',
+        function: {
+          name: 'get_weather',
+          description: '查询城市天气',
+          parameters: { type: 'object', properties: { city: { type: 'string' } }, required: ['city'] },
+        },
+      },
+    ],
+    toolChoice: 'auto',
+  },
+);
+
+// 模型请求调用的工具
+console.log(r.toolCalls);
+// [{ id: 'call_1', name: 'get_weather', arguments: '{"city":"北京"}' }]
+
+// 执行工具后回传结果，拿到最终回复
+const final = await llm.model('deepseek-v3').chat([
+  { role: 'user', content: '北京今天天气怎么样？' },
+  { role: 'assistant', content: '', toolCalls: r.toolCalls },
+  { role: 'tool', toolCallId: r.toolCalls![0].id, content: '{"weather":"晴","temp":20}' },
+]);
+console.log(final.content);
+```
+
+> 支持 OpenAI 兼容协议（DeepSeek / Qwen / GLM / Kimi 等）。Anthropic 的 `tool_use` 协议暂未支持。
+
 ## 对比
 
 | | llmway | Vercel AI SDK | LangChain |
@@ -163,7 +200,6 @@ llm.register({
 ## Roadmap
 
 - [ ] 扩充模型至 19+（QVQ、DeepSeek R1、百川、MiniMax、Yi 等）
-- [ ] Function calling / 工具调用统一封装
 - [ ] 用量统计与成本聚合
 - [ ] 可选的服务端网关（代理 + 额度 + 多租户）
 - [ ] React / Vue hooks 绑定

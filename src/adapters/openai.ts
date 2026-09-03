@@ -8,7 +8,12 @@ import type { TransportConfig } from '../transport';
 
 interface UnkeyedChoice {
   delta?: { content?: string };
-  message?: { content?: string };
+  message?: { content?: string; tool_calls?: UnkeyedToolCall[] };
+}
+interface UnkeyedToolCall {
+  id?: string;
+  type?: string;
+  function?: { name?: string; arguments?: string };
 }
 interface UnkeyedUsage {
   prompt_tokens?: number;
@@ -45,15 +50,27 @@ export function createOpenAIAdapter(meta: ModelMeta, transport: TransportConfig)
   function buildMessages(
     messages: Message[],
     options?: ChatOptions,
-  ): Array<{ role: string; content: string | Array<Record<string, unknown>> }> {
-    const result: Array<{ role: string; content: string | Array<Record<string, unknown>> }> = [];
+  ): Array<Record<string, unknown>> {
+    const result: Array<Record<string, unknown>> = [];
 
     if (options?.systemPrompt) {
       result.push({ role: 'system', content: options.systemPrompt });
     }
 
     for (const msg of messages) {
-      if (msg.images?.length && meta.capabilities.vision) {
+      if (msg.role === 'assistant' && msg.toolCalls?.length) {
+        result.push({
+          role: 'assistant',
+          content: msg.content ?? '',
+          tool_calls: msg.toolCalls.map((tc) => ({
+            id: tc.id,
+            type: 'function',
+            function: { name: tc.name, arguments: tc.arguments },
+          })),
+        });
+      } else if (msg.role === 'tool') {
+        result.push({ role: 'tool', tool_call_id: msg.toolCallId ?? '', content: msg.content });
+      } else if (msg.images?.length && meta.capabilities.vision) {
         const parts: Array<Record<string, unknown>> = [{ type: 'text', text: msg.content }];
         for (const img of msg.images) {
           parts.push({ type: 'image_url', image_url: { url: img } });
@@ -67,8 +84,8 @@ export function createOpenAIAdapter(meta: ModelMeta, transport: TransportConfig)
     return result;
   }
 
-  function buildBody(messages: Message[], options?: ChatOptions, stream = false) {
-    return {
+  function buildBody(messages: Message[], options?: ChatOptions, stream = false): Record<string, unknown> {
+    const body: Record<string, unknown> = {
       model: meta.modelName,
       messages: buildMessages(messages, options),
       temperature: options?.temperature ?? 0.7,
@@ -76,6 +93,11 @@ export function createOpenAIAdapter(meta: ModelMeta, transport: TransportConfig)
       max_tokens: options?.maxTokens ?? 4096,
       stream,
     };
+    if (options?.tools?.length) {
+      body.tools = options.tools;
+      if (options.toolChoice !== undefined) body.tool_choice = options.toolChoice;
+    }
+    return body;
   }
 
   return {
@@ -93,6 +115,11 @@ export function createOpenAIAdapter(meta: ModelMeta, transport: TransportConfig)
           usage?: UnkeyedUsage;
         };
         const choice = data.choices?.[0];
+        const toolCalls = choice?.message?.tool_calls?.map((tc) => ({
+          id: tc.id ?? '',
+          name: tc.function?.name ?? '',
+          arguments: tc.function?.arguments ?? '{}',
+        }));
         return {
           id: data.id ?? '',
           content: choice?.message?.content ?? '',
@@ -104,6 +131,7 @@ export function createOpenAIAdapter(meta: ModelMeta, transport: TransportConfig)
                 totalTokens: data.usage.total_tokens ?? 0,
               }
             : undefined,
+          toolCalls: toolCalls?.length ? toolCalls : undefined,
         };
       });
     },

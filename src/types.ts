@@ -40,11 +40,34 @@ export interface ModelMeta {
   pricing: ModelPricing;
 }
 
+/** 模型返回的工具调用（function calling） */
+export interface ToolCall {
+  id: string;
+  /** 要调用的函数名 */
+  name: string;
+  /** 参数（JSON 字符串） */
+  arguments: string;
+}
+
+/** 可供模型调用的工具（OpenAI 风格 JSON Schema） */
+export interface Tool {
+  type: 'function';
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
+
 export interface Message {
   role: 'system' | 'user' | 'assistant' | 'function' | 'tool';
   content: string;
   /** 多模态图片（url 或 base64 data url） */
   images?: string[];
+  /** assistant 消息携带的工具调用 */
+  toolCalls?: ToolCall[];
+  /** tool 角色消息回传时对应的 tool_call id */
+  toolCallId?: string;
 }
 
 export interface ChatOptions {
@@ -54,6 +77,10 @@ export interface ChatOptions {
   maxTokens?: number;
   /** 中止信号，用于取消请求 */
   signal?: AbortSignal;
+  /** 可供模型调用的工具列表 */
+  tools?: Tool[];
+  /** 工具选择策略：'auto' | 'none' | 'required' 或指定函数 */
+  toolChoice?: 'auto' | 'none' | 'required' | { type: 'function'; function: { name: string } };
 }
 
 export interface Usage {
@@ -67,6 +94,8 @@ export interface ChatResponse {
   content: string;
   model: string;
   usage?: Usage;
+  /** 模型请求的工具调用（function calling 时返回） */
+  toolCalls?: ToolCall[];
 }
 
 export interface ChatChunk {

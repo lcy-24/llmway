@@ -76,6 +76,33 @@ for await (const chunk of model.chatStream([{ role: 'user', content: '介绍一�
 }
 ```
 
+## Quick Demo
+
+```ts
+import { createLLM } from 'llmway';
+
+const llm = createLLM({ apiKeys: { DEEPSEEK_API_KEY: 'sk-...' } });
+const model = llm.model('deepseek-v3');
+
+// 非流式：一次拿完整回复
+const r = await model.chat([{ role: 'user', content: '用一句话介绍你自己' }]);
+console.log(r.content);
+console.log(r.usage); // { promptTokens, completionTokens, totalTokens }
+
+// 流式：逐字输出，适合接 UI
+for await (const c of model.chatStream([{ role: 'user', content: '解释斐波那契数列' }])) {
+  process.stdout.write(c.content);
+}
+```
+
+真实运行输出（以通义千问为例）：
+
+```text
+我是通义千问，一个能陪你思考、写作、编程和解决问题的 AI 助手。
+{ promptTokens: 52, completionTokens: 103, totalTokens: 155 }
+斐波那契数列是一个每个数都等于前两个数之和的数列……
+```
+
 ## 内置模型
 
 | id | 模型 | 提供商 | 环境变量 |

@@ -78,6 +78,10 @@ for await (const chunk of model.chatStream([{ role: 'user', content: '介绍一�
 
 ## Quick Demo
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lcy-24/llmway/main/assets/demo.gif" alt="llmway 终端演示" width="640" />
+</p>
+
 ```ts
 import { createLLM } from 'llmway';
 

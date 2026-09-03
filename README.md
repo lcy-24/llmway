@@ -6,6 +6,7 @@
 
 一个 API，调用所有大模型。告别为每个厂商单独装 SDK。
 
+[![npm version](https://img.shields.io/npm/v/poly-llm)](https://www.npmjs.com/package/poly-llm)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4-3178c6.svg)](https://www.typescriptlang.org/)
 ![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)

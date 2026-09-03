@@ -1,7 +1,7 @@
 {
   "name": "llmway",
-  "version": "0.1.0",
-  "description": "零依赖、浏览器/Node 双端的统一大模型接入层，覆盖 19 个国内外模型（OpenAI / Anthropic / Gemini / DeepSeek / 通义千问 / GLM / Kimi / 豆包 / 文心 / 星火 等）",
+  "version": "0.1.1",
+  "description": "零依赖、浏览器/Node 双端的统一大模型接入层，覆盖 11 个国内外模型（OpenAI / Anthropic / Gemini / DeepSeek / 通义千问 / GLM / Kimi / 豆包 / 文心 / 星火 等）",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

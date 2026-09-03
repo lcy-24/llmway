@@ -1,0 +1,57 @@
+{
+  "name": "poly-llm",
+  "version": "0.1.0",
+  "description": "零依赖、浏览器/Node 双端的统一大模型接入层，覆盖 19 个国内外模型（OpenAI / Anthropic / Gemini / DeepSeek / 通义千问 / GLM / Kimi / 豆包 / 文心 / 星火 等）",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "llm",
+    "openai",
+    "anthropic",
+    "claude",
+    "gemini",
+    "deepseek",
+    "qwen",
+    "glm",
+    "moonshot",
+    "doubao",
+    "ernie",
+    "spark",
+    "unified-llm",
+    "multi-model",
+    "sdk",
+    "国产大模型",
+    "多模型",
+    "统一接入"
+  ],
+  "author": "Deeper AI Team",
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}
